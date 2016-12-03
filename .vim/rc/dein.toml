@@ -1,0 +1,71 @@
+# 基本は github.com のレポジトリーを指定するだけ
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+# ブランチやタグを指定したいとき
+[[plugins]]
+repo = 'delphinus35/typescript-vim'
+rev  = 'colorize-template-strings'
+
+# 特定の条件で読み込みたいとき
+[[plugins]]
+repo = 'elzr/vim-json'
+if   = '''! has('kaoriya')'''
+
+# 依存関係を指定したいとき
+[[plugins]]
+repo    = 'vim-airline/vim-airline'
+depends = ['vim-airline-themes']
+
+# 依存関係を指定したからと言って、自動でインストールはされない（ここは NeoBundle と違う）
+[[plugins]]
+repo = 'vim-airline/vim-airline-themes'
+
+#NERDTree
+[[plugins]]
+repo = 'scrooloose/nerdtree'
+
+#indent
+[[plugins]]
+repo = 'nathanaelkane/vim-indent-guides'
+
+#color
+[[plugins]]
+repo = 'tomasr/molokai'
+
+#syntastic
+[[plugins]]
+repo = 'vim-syntastic/syntastic'
+
+#white space
+[[plugins]]
+repo = 'bronson/vim-trailing-whitespace'
+
+#自動補完
+[[plugins]]
+repo = 'Shougo/neocomplete.vim'
+
+#自動保管
+[[plugins]]
+repo = 'Shougo/neosnippet.vim'
+
+[[plugins]]
+repo = 'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo = 'Shougo/neocomplete.vim'
+
+#英単語補完
+[[plugins]]
+repo = 'ujihisa/neco-look'
+
+#カッコ閉じる
+[[plugins]]
+repo = 'Townk/vim-autoclose'
+
+#Latex
+[[plugins]]
+repo = 'lervag/vimtex'
+
+[[plugins]]
+repo = 'thinca/vim-quickrun'
