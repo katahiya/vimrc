@@ -1,9 +1,7 @@
-" プラグインが実際にインストールされるディレクトリ
 let s:dein_dir = expand('~/.cache/dein')
-" dein.vim 本体
 let s:dein_repo_dir = s:dein_dir . '/.vim/dein/repos/github.com/Shougo/dein.vim'
 
-" dein.vim がなければ github から落としてくる
+
 if &runtimepath !~# '/dein.vim'
   if !isdirectory(s:dein_repo_dir)
     execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
@@ -11,225 +9,201 @@ if &runtimepath !~# '/dein.vim'
   execute 'set runtimepath^=' . fnamemodify(s:dein_repo_dir, ':p')
 endif
 
-" 設定開始
 if dein#load_state(s:dein_dir)
   call dein#begin(s:dein_dir)
 
-  " プラグインリストを収めた TOML ファイル
-  " 予め TOML ファイル（後述）を用意しておく
   let g:rc_dir    = expand('~/.vim/rc')
   let s:toml      = g:rc_dir . '/dein.toml'
   let s:lazy_toml = g:rc_dir . '/dein_lazy.toml'
 
-  " TOML を読み込み、キャッシュしておく
   call dein#load_toml(s:toml,      {'lazy': 0})
   call dein#load_toml(s:lazy_toml, {'lazy': 1})
 
-  " 設定終了
   call dein#end()
   call dein#save_state()
 endif
 
-" もし、未インストールものものがあったらインストール
 if dein#check_install()
   call dein#install()
 endif
-
-
 
 "Colorscheme
 syntax on
 colorscheme molokai
 set t_Co=256
 
+set fileencoding=utf-8 " 保存時の文字コード
+set fileencodings=ucs-boms,utf-8,euc-jp,cp932 " 読み込み時の文字コードの自動判別. 左側が優先される
+set fileformats=unix,dos,mac " 改行コードの自動判別. 左側が優先される
+set ambiwidth=double " □や○文字が崩れる問題を解決
 
 
-
-"ヤンクでクリップボードにコピー
-set clipboard=unnamed,autoselect
 " setting
-" "文字コードをUFT-8に設定
 set fenc=utf-8
-" " バックアップファイルを作らない
 set nobackup
-" " スワップファイルを作らない
 set noswapfile
-" " 編集中のファイルが変更されたら自動で読み直す
 set autoread
-" " バッファが編集中でもその他のファイルを開けるように
 set hidden
-" " 入力中のコマンドをステータスに表示する
 set showcmd
 "
-"
-" " 見た目系
-" " 行番号を表示
 set number
-" " 現在の行を強調表示
 set cursorline
-" " 現在の行を強調表示（縦）
 " set cursorcolumn
-" " 行末の1文字先までカーソルを移動できるように
-set virtualedit=onemore
-" " インデントはスマートインデント
 set smartindent
-" " ビープ音を可視化
 set visualbell
-" " 括弧入力時の対応する括弧を表示
 set showmatch
-" " ステータスラインを常に表示
 set laststatus=2
-" " コマンドラインの補完
 set wildmode=list:longest
-" " 折り返し時に表示行単位での移動できるようにする
 nnoremap j gj
 nnoremap k gk
 
 
-" Tab系
-" 不可視文字を可視化(タブが「▸-」と表示される)
-"set list listchars=tab:\▸\-
-" Tab文字を半角スペースにする
+"set list listchars=tab:
 set expandtab
-" 行頭以外のTab文字の表示幅（スペースいくつ分）
 set tabstop=2
-" 行頭でのTab文字の表示幅
 set shiftwidth=2" "
 
-"検索系
-" " 検索文字列が小文字の場合は大文字小文字を区別なく検索する
 set ignorecase
-" " 検索文字列に大文字が含まれている場合は区別して検索する
 set smartcase
-" " 検索文字列入力時に順次対象文字列にヒットさせる
 set incsearch
-" " 検索時に最後まで行ったら最初に戻る
 set wrapscan
-" " 検索語をハイライト表示
 set hlsearch
-" " ESC連打でハイライト解除
 nmap <Esc><Esc> :nohlsearch<CR><Esc>
 
-"indent
-let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=3
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=4
-
 "tab
-set tabstop=2 "画面上でタブ文字が占める幅
-set shiftwidth=2 "自動インデントでずれる幅
-set softtabstop=2 "連続した空白に対してタブキーやバックスペースキーでカーソルが動く幅
-set autoindent "改行時に前の行のインデントを継続する
-set smartindent "改行時に入力された行の末尾に合わせて次の行のインデントを増減する
+set tabstop=4
+set shiftwidth=2
+set softtabstop=2
+set autoindent
+set smartindent
 
-"snippet
-" Plugin key-mappings.
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
+"backspace
+set backspace=indent,eol,start
 
-" SuperTab like snippets behavior.
-"imap <expr><TAB>
-" \ pumvisible() ? "\<C-n>" :
-" \ neosnippet#expandable_or_jumpable() ?
-" \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+"rubocop
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['ruby'] }
+let g:syntastic_ruby_checkers = ['rubocop']
 
-" For conceal markers.
 if has('conceal')
   set conceallevel=2 concealcursor=niv
 endif
 
-"neocomplete
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-" Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
-" Use smartcase.
-let g:neocomplete#enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+"------------------------------------
+" neocomplete.vim
+"------------------------------------
+if !has('nvim') && has('lua')
+  " Use neocomplete.
+  let g:neocomplete#enable_at_startup = 1
+  " Use smartcase.
+  let g:neocomplete#enable_smart_case = 1
+  " Set minimum syntax keyword length.
+  let g:neocomplete#sources#syntax#min_keyword_length = 3
 
-" Define dictionary.
-let g:neocomplete#sources#dictionary#dictionaries = {
-    \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'scheme' : $HOME.'/.gosh_completions'
-        \ }
-
-" Define keyword.
-if !exists('g:neocomplete#keyword_patterns')
+  let g:neocomplete#enable_camel_case_completion = 1    "| camle caseを有効化。大文字を区切りとしたワイルドカードのように振る舞う
+  let g:neocomplete#enable_underbar_completion = 1      "| _(アンダーバー)区切りの補完を有効化
+  let g:neocomplete#source#syntax#min_syntax_length = 3 "| シンタックスをキャッシュするときの最小文字長を3に
+  let g:neocomplete#lock_buffer_name_pattern = '\*ku\*' "| neocomplcacheを自動的にロックするバッファ名のパターン
+  " Define dictionary. -------------------------------------------
+  let g:neocomplete#source#dictionary#dictionaries = {
+    \ 'default'    : '',
+    \ 'java'       : $HOME.'/.vim/dict/java.dict',
+    \ }
+  " Define keyword. -----------------------------------------------
+  if !exists('g:neocomplete#keyword_patterns')
     let g:neocomplete#keyword_patterns = {}
+  endif
+  let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+  " 補完を選択しpopupを閉じる
+  inoremap <expr><C-y> neocomplete#close_popup()
+  " 補完をキャンセルしpopupを閉じる
+  inoremap <expr><C-e> neocomplete#cancel_popup()
+  " TABで補完できるようにする
+  inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+  " undo
+  inoremap <expr><C-g> neocomplete#undo_completion()
+  " 補完候補の共通部分までを補完する
+  inoremap <expr><C-l> neocomplete#complete_common_string()
+  " C-kを押すと行末まで削除
+  inoremap <C-k> <C-o>D
+  " C-nでneocomplcache補完
+  inoremap <expr><C-n> pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>"
+  " C-pでkeyword補完
+  inoremap <expr><C-p> pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
+
+  " Plugin key-mappings.
+  inoremap <expr><C-g>     neocomplete#undo_completion()
+  inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+  " <C-h>, <BS>: close popup and delete backword char.
+  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+  " バックスペースで補完のポップアップを閉じる
+  inoremap <expr><BS> neocomplete#smart_close_popup()."<C-h>"
+  " 補完候補が表示されている場合は確定。そうでない場合は改行
+  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+  function! s:my_cr_function()
+    return pumvisible() ? "\<C-y>" : "\<CR>"
+  endfunction
+
+  " Enable heavy omni completion.
+  if !exists('g:neocomplete#sources#omni#input_patterns')
+    let g:neocomplete#sources#omni#input_patterns = {}
+  endif
+  let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+
+    " Enable heavy omni completion.
+  if !exists('g:neocomplete#source#omni#input_patterns')
+    let g:neocomplete#source#omni#input_patterns = {}
+  endif
+  let g:neocomplete#source#omni#input_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+  let g:neocomplete#source#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+
+  let g:neocomplete#source#omni#input_patterns.python = '\h\w*\|[^. \t]\.\w*'
+
+  " Enable omni completion.
+  autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+  autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+  autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+  "for RSense
+  if !exists('g:neocomplcache_omni_patterns')
+    let g:neocomplcache_omni_patterns = {}
+  endif
+
+  let g:neocomplete#sources#dictionary#dictionaries = {
+  \  'ruby': $HOME . '/dicts/ruby.dict',
+  \}
+
+  autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+  let g:rsenseHome = expand("~/.rbenv/shims/rsense")
+  let g:rsenseUseOmniFunc = 1
 endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
+let file_name = expand('%')
 
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? "\<C-y>" : "\<CR>"
-endfunction
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-" Close popup by <Space>.
-"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
+"split
+nnoremap ss :<C-u>sp<CR>
+nnoremap sv :<C-u>vs<CR>
+nnoremap sq :<C-u>q<CR>
+nnoremap sQ :<C-u>bd<CR>
+nnoremap sj <C-w>j
+nnoremap sk <C-w>k
+nnoremap sl <C-w>l
+nnoremap sh <C-w>h
+nnoremap sJ <C-w>J
+nnoremap sK <C-w>K
+nnoremap sL <C-w>L
+nnoremap sH <C-w>H
 
-" AutoComplPop like behavior.
-"let g:neocomplete#enable_auto_select = 1
-
-" Shell like behavior(not recommended).
-"set completeopt+=longest
-"let g:neocomplete#enable_auto_select = 1
-"let g:neocomplete#disable_auto_complete = 1
-"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
-
-" Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-" Enable heavy omni completion.
-if !exists('g:neocomplete#sources#omni#input_patterns')
-  let g:neocomplete#sources#omni#input_patterns = {}
-endif
-"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-
-" For perlomni.vim setting.
-" https://github.com/c9s/perlomni.vim
-let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-
-
-"oで改行挿入
-nnoremap o :<C-u>call append(expand('.'), '')<Cr>j
-
-"インサートモード中
-"行頭へ移動
-inoremap <C-a> <C-o>^
-"行末へ移動
-inoremap <C-s> <C-o>$
-
-"NERDTree shortcut
-nnoremap <silent><C-e> :NERDTreeToggle<CR>
-
+"------------------------------------
+" NERDTree
+"------------------------------------
+let g:NERDTreeShowBookmarks=1
+autocmd vimenter * NERDTree
+map <C-n> :NERDTreeToggle<CR>
 " NERDTress File highlighting
 function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
- exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
- exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
+  exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
+  exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
 endfunction
 
 call NERDTreeHighlightFile('py',     'yellow',  'none', 'yellow',  '#151515')
@@ -244,23 +218,60 @@ call NERDTreeHighlightFile('css',    'cyan',    'none', 'cyan',    '#151515')
 call NERDTreeHighlightFile('rb',     'Red',     'none', 'red',     '#151515')
 call NERDTreeHighlightFile('js',     'Red',     'none', '#ffa500', '#151515')
 call NERDTreeHighlightFile('php',    'Magenta', 'none', '#ff00ff', '#151515')
+"------------------------------------
+"------------------------------------
 
-" 引数なしでvimを開くとNERDTreeを起動
-let file_name = expand('%')
-if has('vim_starting') &&  file_name == ''
-  autocmd VimEnter * NERDTree ./
+" SuperTab like snippets behavior.
+"imap <expr><TAB>
+" \ pumvisible() ? "\<C-n>" :
+" \ neosnippet#expandable_or_jumpable() ?
+" \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+" Unite
+let g:unite_source_history_yank_enable =1
+let g:unite_source_file_mru_limit = 200
+nnoremap <silent> ,uy :<C-u>Unite history/yank<CR>
+nnoremap <silent> ,ub :<C-u>Unite buffer<CR>
+nnoremap <silent> <C-u><C-f> :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
+nnoremap <silent> <C-u><C-m> :<C-u>Unite file_mru buffer<CR>
+au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+au FileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+au FileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+
+"vim filer
+let g:vimfiler_as_default_explorer = 1
+let g:vimfiler_safe_mode_by_default = 0
+nnoremap <silent> <Leader>fe :<C-u>VimFilerBufferDir -quit<CR>
+nnoremap <silent> <Leader>fi :<C-u>VimFilerBufferDir -split -simple -winwidth=35 -no-quit<CR>
+nnoremap <silent><C-e> :VimFiler<CR>
+
+"jedi-vim
+autocmd FileType python setlocal completeopt-=preview
+
+"paste
+set clipboard=unnamed,autoselect
+if &term =~ "xterm"
+    let &t_SI .= "\e[?2004h"
+    let &t_EI .= "\e[?2004l"
+    let &pastetoggle = "\e[201~"
+
+    function XTermPasteBegin(ret)
+        set paste
+        return a:ret
+    endfunction
+
+   inoremap <special> <expr> <Esc>[200~ XTermPasteBegin("")
 endif
 
-" ウィンドウ分割を楽にする設定
-nnoremap ss :<C-u>sp<CR>
-nnoremap sv :<C-u>vs<CR>
-nnoremap sq :<C-u>q<CR>
-nnoremap sQ :<C-u>bd<CR>
-nnoremap sj <C-w>j
-nnoremap sk <C-w>k
-nnoremap sl <C-w>l
-nnoremap sh <C-w>h
-nnoremap sJ <C-w>J
-nnoremap sK <C-w>K
-nnoremap sL <C-w>L
-nnoremap sH <C-w>H
+let mapleader = "\<Space>"
+
+nnoremap <Leader>l $
+nnoremap <Leader>h ^
+noremap <Leader>l $
+vnoremap <Leader>h ^
+nmap <Leader>s <Plug>(easymotion-s2)
+vmap <Leader>s <Plug>(easymotion-s2)
